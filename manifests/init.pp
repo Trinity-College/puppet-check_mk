@@ -6,22 +6,21 @@ class check_mk (
   $package          = $check_mk::params::package,
   $site             = $check_mk::params::site,
   $workspace        = $check_mk::params::workspace,
+  $version          = $check_mk::params::version,
 ) inherits check_mk::params {
 
   class { 'check_mk::install':
     filestore => $filestore,
-    package   => $package,
+    package   => "${package}-${version}",
     site      => $site,
     workspace => $workspace,
-  }
+  } ->
   class { 'check_mk::config':
     host_groups => $host_groups,
     site        => $site,
-    require     => Class['check_mk::install'],
-  }
+  } ~>
   class { 'check_mk::service':
-    checkmk_service => $checkmk_service,
-    httpd_service  => $httpd_service,
-    require        => Class['check_mk::config'],
+    checkmk_service => "${checkmk_service}-${version}",
+    httpd_service   => $httpd_service,
   }
 }
