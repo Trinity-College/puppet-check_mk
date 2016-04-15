@@ -2,7 +2,7 @@ class check_mk::params {
 
   # common variables
   $checkmk_service = 'omd'
-  $package = 'omd-0.56'
+  $package = 'omd'
   $filestore = undef
   $host_groups= undef
   $site = 'monitoring'
