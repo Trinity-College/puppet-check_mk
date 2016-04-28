@@ -75,6 +75,21 @@ class check_mk::config (
       notify     => Exec['check_mk-refresh']
     }
   }
+  # Check Parameters
+  concat::fragment { 'check_params-header':
+    target  => "${etc_dir}/check_mk/main.mk",
+    content => "check_parameters = [\n",
+    order   => 30,
+  }
+  concat::fragment { 'check_params-footer':
+    target  => "${etc_dir}/check_mk/main.mk",
+    content => "]\n",
+    order   => 39,
+  }
+  Check_mk::Check_parameters <<| |>> {
+    target => "${etc_dir}/check_mk/main.mk",
+    notify => Exec['check_mk-refresh'],
+  }
   # local config is in /omd/sites/${site}/etc/check_mk/main.mk.local and is appended
   concat::fragment { 'check_mk-local-config':
     ensure => "${etc_dir}/check_mk/main.mk.local",
