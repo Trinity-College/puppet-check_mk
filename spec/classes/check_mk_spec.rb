@@ -12,7 +12,7 @@ describe 'check_mk', :type => :class do
     it { should contain_class('check_mk::config').with({
           :host_groups => nil,
           :site        => 'monitoring',
-       }).that_comes_before('Class[check_mk::service]') }
+       }).that_notifies('Class[check_mk::service]') }
     it { should contain_class('check_mk::service') }
   end
 end

@@ -7,6 +7,7 @@ class check_mk::params {
   $host_groups= undef
   $site = 'monitoring'
   $workspace = '/root/check_mk'
+  $version = '0.56'
 
   # OS specific variables
   case $::osfamily {
