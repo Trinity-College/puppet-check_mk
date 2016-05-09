@@ -22,9 +22,9 @@
 define check_mk::agent::mrpe (
   $command,
 ) {
-  $mrpe_config_file = $::operatingsystem ? {
-    centos  => '/etc/check-mk-agent/mrpe.cfg',
-    redhat  => '/etc/check-mk-agent/mrpe.cfg',
+  $mrpe_config_file = $::osfamily ? {
+    RedHat  => '/etc/check_mk/mrpe.cfg',
+    Debian  => '/etc/check_mk/mrpe.cfg',
     default => undef,
   }
 
@@ -39,6 +39,6 @@ define check_mk::agent::mrpe (
       content => "${name} ${command}\n",
     }
   } else {
-    fail("Creating mrpe.cfg is unsupported for operatingsystem ${::operatingsystem}")
+    fail("Creating mrpe.cfg is unsupported for osfamily ${::osfamily}")
   }
 }
