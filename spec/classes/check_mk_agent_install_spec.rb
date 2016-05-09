@@ -19,7 +19,7 @@ describe 'check_mk::agent::install', :type => :class do
         )
       }
       it { should contain_package('xinetd') }
-      it { should contain_package('check_mk-agent').with_name('check-mk-agent') }
+      it { should contain_package('check_mk-agent').with_name('check_mk-agent') }
     end
 
     context 'with custom package' do
