@@ -58,6 +58,14 @@ class check_mk::agent::config (
     notify  => Class['check_mk::agent::service'],
   }
 
+  # Create check_mk config directory
+  file { '/etc/check_mk':
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
   # Delete file from older check_mk package version
   if $::osfamily == 'RedHat' {
     file { '/etc/xinetd.d/check_mk':
