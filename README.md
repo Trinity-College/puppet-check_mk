@@ -167,22 +167,22 @@ to the check_mk server
 
 Example usage:
 
-class { 'check_mk':
-  version      => '0.56',
-  site         => 'mysite',
-  static_hosts => hiera('check_mk::static_hosts'),
-}
+    class { 'check_mk':
+      version      => '0.56',
+      site         => 'mysite',
+      static_hosts => hiera('check_mk::static_hosts'),
+    }
 
 With hieradata as such
 
-check_mk::static_hosts:
-  - host1.domain
-  - host2.domain
+    check_mk::static_hosts:
+      - host1.domain
+      - host2.domain
 
 
 You can also include host tags - for example:
 
-check_mk::static_hosts:
-  - host1.domain|windows|dev,
-  - host2.domain|windows|prod,
+    check_mk::static_hosts:
+      - host1.domain|windows|dev,
+      - host2.domain|windows|prod,
 
