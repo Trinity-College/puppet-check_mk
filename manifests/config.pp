@@ -3,6 +3,7 @@ class check_mk::config (
   $site,
   $host_groups = undef,
   $parents = undef,
+  $static_hosts = undef,
 ) {
   $etc_dir = "/omd/sites/${site}/etc"
   $bin_dir = "/omd/sites/${site}/bin"

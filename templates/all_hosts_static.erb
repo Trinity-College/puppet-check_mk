@@ -1,6 +1,5 @@
-<% static_hosts = scope.lookupvar('check_mk::config::all_hosts_static') -%>
-<% if static_hosts.is_a? Array -%>
-<% static_hosts.each do |check_host| -%>
-  '<%= host_name %>',
+<% if @static_hosts.is_a? Array -%>
+<% @static_hosts.each do |check_host| -%>
+  '<%= check_host %>',
 <% end -%>
 <% end -%>

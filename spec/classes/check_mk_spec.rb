@@ -13,9 +13,10 @@ describe 'check_mk', :type => :class do
           :workspace => '/root/check_mk',
       }).that_comes_before('Class[check_mk::config]') }
     it { should contain_class('check_mk::config').with({
-          :host_groups => nil,
-          :parents     => nil,
-          :site        => 'monitoring',
+          :host_groups  => nil,
+          :parents      => nil,
+          :static_hosts => nil,
+          :site         => 'monitoring',
        }).that_notifies('Class[check_mk::service]') }
     it { should contain_class('check_mk::service') }
   end

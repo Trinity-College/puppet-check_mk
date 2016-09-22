@@ -6,6 +6,7 @@ class check_mk::params {
   $filestore = undef
   $host_groups = undef
   $parents = undef
+  $static_hosts = undef
   $site = 'monitoring'
   $workspace = '/root/check_mk'
   $version = '0.56'

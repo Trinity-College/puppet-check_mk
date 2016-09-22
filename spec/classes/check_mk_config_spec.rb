@@ -158,4 +158,20 @@ describe 'check_mk::config', :type => :class do
       })
     }
   end
+  context 'with static_hosts' do
+    static_hosts = [
+        'host1',
+        'host2|tag1|tag2',
+    ]
+    let :params do
+      {
+          :site => 'TEST_SITE',
+          :static_hosts => static_hosts,
+      }
+    end
+    it { should contain_file('/omd/sites/TEST_SITE/etc/check_mk/all_hosts_static').with({
+          :content => "  'host1',\n  'host2|tag1|tag2',\n",
+      })
+    }
+  end
 end
