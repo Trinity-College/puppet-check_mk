@@ -21,7 +21,7 @@ describe 'check_mk::check_parameters', :type => :define do
     it { should contain_concat__fragment('check_mk-fs_default-host.example.com').with({
           :target  => 'target',
           :content => "  ( (90, 95), ALL_HOSTS, [ 'fs_' ] \),\n",
-          :order   => 36,
+          :order   => 46,
       })
     }
   end
@@ -45,7 +45,7 @@ describe 'check_mk::check_parameters', :type => :define do
     it { should contain_concat__fragment('check_mk-fs_default-host.example.com').with({
           :target  => 'target',
           :content => "  ( (90, 95), [ 'debian', 'prod' ], [ 'host1', 'host2' ], [ 'fs_' ] \),\n",
-          :order   => 31,
+          :order   => 41,
       })
     }
   end

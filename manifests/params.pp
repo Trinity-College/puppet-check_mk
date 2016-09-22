@@ -4,7 +4,8 @@ class check_mk::params {
   $checkmk_service = 'omd'
   $package = 'omd'
   $filestore = undef
-  $host_groups= undef
+  $host_groups = undef
+  $parents = undef
   $site = 'monitoring'
   $workspace = '/root/check_mk'
   $version = '0.56'

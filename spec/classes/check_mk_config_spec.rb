@@ -121,4 +121,41 @@ describe 'check_mk::config', :type => :class do
       })
     }
   end
+  context 'with parents' do
+    parents = {
+        'parent1' => {'host_tags' => ['dev']},
+        'parent2' => {'host_tags' => ['prod']},
+    }
+    let :params do
+      {
+          :site => 'TEST_SITE',
+          :parents => parents,
+      }
+    end
+    it { should contain_class('check_mk::config') }
+    it { should contain_concat__fragment('parents-header').with({
+          :target => '/omd/sites/TEST_SITE/etc/check_mk/main.mk',
+          :content => /parents = \[\n/,
+          :order  => 30,
+      })
+    }
+    it { should contain_concat__fragment('parents-footer').with({
+          :target => '/omd/sites/TEST_SITE/etc/check_mk/main.mk',
+          :content => /\]\n/,
+          :order  => 39,
+      })
+    }
+    it { should contain_check_mk__parent('parent1').with({
+          :host_tags => ['dev'],
+          :target    => '/omd/sites/TEST_SITE/etc/check_mk/main.mk',
+          :notify    => 'Exec[check_mk-refresh]',
+      })
+    }
+    it { should contain_check_mk__parent('parent2').with({
+          :host_tags => ['prod'],
+          :target    => '/omd/sites/TEST_SITE/etc/check_mk/main.mk',
+          :notify    => 'Exec[check_mk-refresh]',
+      })
+    }
+  end
 end

@@ -2,6 +2,7 @@
 class check_mk::config (
   $site,
   $host_groups = undef,
+  $parents = undef,
 ) {
   $etc_dir = "/omd/sites/${site}/etc"
   $bin_dir = "/omd/sites/${site}/bin"
@@ -75,16 +76,35 @@ class check_mk::config (
       notify     => Exec['check_mk-refresh']
     }
   }
+  # parents
+  if $parents {
+    concat::fragment { 'parents-header':
+      target  => "${etc_dir}/check_mk/main.mk",
+      content => "parents = [\n",
+      order   => 30,
+    }
+    concat::fragment { 'parents-footer':
+      target  => "${etc_dir}/check_mk/main.mk",
+      content => "]\n",
+      order   => 39,
+    }
+    create_resources('@check_mk::parent', $parents)
+    Check_mk::Parent <| |> {
+      target => "${etc_dir}/check_mk/main.mk",
+      notify => Exec['check_mk-refresh'],
+    }
+  }
+
   # Check Parameters
   concat::fragment { 'check_params-header':
     target  => "${etc_dir}/check_mk/main.mk",
     content => "check_parameters = [\n",
-    order   => 30,
+    order   => 40,
   }
   concat::fragment { 'check_params-footer':
     target  => "${etc_dir}/check_mk/main.mk",
     content => "]\n",
-    order   => 39,
+    order   => 49,
   }
   Check_mk::Check_parameters <<| |>> {
     target => "${etc_dir}/check_mk/main.mk",

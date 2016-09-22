@@ -24,7 +24,7 @@ define check_mk::check_parameters (
   concat::fragment { "check_mk-${title}-${::fqdn}":
     target  => $target,
     content => $_content,
-    order   => 31 + $order,
+    order   => 41 + $order,
   }
 }
 

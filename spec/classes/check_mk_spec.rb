@@ -14,6 +14,7 @@ describe 'check_mk', :type => :class do
       }).that_comes_before('Class[check_mk::config]') }
     it { should contain_class('check_mk::config').with({
           :host_groups => nil,
+          :parents     => nil,
           :site        => 'monitoring',
        }).that_notifies('Class[check_mk::service]') }
     it { should contain_class('check_mk::service') }
