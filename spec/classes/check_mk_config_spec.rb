@@ -123,8 +123,9 @@ describe 'check_mk::config', :type => :class do
   end
   context 'with parents' do
     parents = {
-        'parent1' => {'host_tags' => ['dev']},
-        'parent2' => {'host_tags' => ['prod']},
+        'parent1' => {'host_tags' => ['prod']},
+        'rule2'   => {'parent' => 'parent2', 'host_tags' => ['dev']},
+        'rule3'   => {'parent' => 'parent2', 'host_tags' => ['test']},
     }
     let :params do
       {
@@ -146,13 +147,21 @@ describe 'check_mk::config', :type => :class do
       })
     }
     it { should contain_check_mk__parent('parent1').with({
+          :host_tags => ['prod'],
+          :target    => '/omd/sites/TEST_SITE/etc/check_mk/main.mk',
+          :notify    => 'Exec[check_mk-refresh]',
+      })
+    }
+    it { should contain_check_mk__parent('rule2').with({
+          :parent    => 'parent2',
           :host_tags => ['dev'],
           :target    => '/omd/sites/TEST_SITE/etc/check_mk/main.mk',
           :notify    => 'Exec[check_mk-refresh]',
       })
     }
-    it { should contain_check_mk__parent('parent2').with({
-          :host_tags => ['prod'],
+    it { should contain_check_mk__parent('rule3').with({
+          :parent    => 'parent2',
+          :host_tags => ['test'],
           :target    => '/omd/sites/TEST_SITE/etc/check_mk/main.mk',
           :notify    => 'Exec[check_mk-refresh]',
       })

@@ -18,5 +18,24 @@ describe 'check_mk::parent', :type => :define do
       })
     }
   end
+
+  context 'parent parameter supplied' do
+    let :title do
+      'rule2'
+    end
+    let :params do
+      {
+        :parent    => 'devsw1',
+        :host_tags => ['dev'],
+        :target    => 'target',
+      }
+    end
+    it { should contain_concat__fragment('check_mk-rule2').with({
+          :target  => 'target',
+          :content => "  ( 'devsw1', ['dev'], ALL_HOSTS ),\n",
+          :order   => 31,
+      })
+    }
+  end
 end
 
