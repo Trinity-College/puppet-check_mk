@@ -1,25 +1,28 @@
 
 class check_mk::config (
-  $site,
   $host_groups = undef,
 ) {
-  $etc_dir = "/omd/sites/${site}/etc"
-  $bin_dir = "/omd/sites/${site}/bin"
-  file { "${etc_dir}/nagios/local":
+  $etc_dir = "/etc"
+  $bin_dir = "/usr/bin"
+  $nagios_dir = "${etc_dir}/nagios3/conf.d/check_mk"
+  file { $nagios_dir:
     ensure => directory,
   }
-  file_line { 'nagios-add-check_mk-cfg_dir':
-    ensure  => present,
-    line    => "cfg_dir=${etc_dir}/nagios/local",
-    path    => "${etc_dir}/nagios/nagios.cfg",
-    require => File["${etc_dir}/nagios/local"],
-    notify  => Class['check_mk::service'],
-  }
+
+  # Upstream needed this, but on Debian with the native check-mk packages we
+  # don't need this, as /etc/nagios3/conf.d/check_mk is already included in
+  # the nagios configuration.
+  #file_line { 'nagios-add-check_mk-cfg_dir':
+  #  ensure  => present,
+  #  line    => "cfg_dir=${nagios_dir}",
+  #  path    => "${etc_dir}/nagios/nagios.cfg",
+  #  require => File["${nagios_dir}"],
+  #  notify  => Class['check_mk::service'],
+  #}
   file_line { 'add-guest-users':
     ensure => present,
     line   => 'guest_users = [ "guest" ]',
     path   => "${etc_dir}/check_mk/multisite.mk",
-    notify => Class['check_mk::service'],
   }
   file { "${etc_dir}/check_mk/all_hosts_static":
       ensure  => file,
@@ -46,7 +49,6 @@ class check_mk::config (
     target => "${etc_dir}/check_mk/main.mk",
     notify => Exec['check_mk-refresh']
   }
-  # local list of hosts is in /omd/sites/${site}/etc/check_mk/all_hosts_static and is appended
   concat::fragment { 'all-hosts-static':
     ensure => "${etc_dir}/check_mk/all_hosts_static",
     target => "${etc_dir}/check_mk/main.mk",
@@ -54,7 +56,7 @@ class check_mk::config (
   }
   # host_groups
   if $host_groups {
-    file { "${etc_dir}/nagios/local/hostgroups":
+    file { "${nagios_dir}/hostgroups":
       ensure => directory,
     }
     concat::fragment { 'host_groups-header':
@@ -69,13 +71,12 @@ class check_mk::config (
     }
     $groups = keys($host_groups)
     check_mk::hostgroup { $groups:
-      dir        => "${etc_dir}/nagios/local/hostgroups",
+      dir        => "${nagios_dir}/hostgroups",
       hostgroups => $host_groups,
       target     => "${etc_dir}/check_mk/main.mk",
       notify     => Exec['check_mk-refresh']
     }
   }
-  # local config is in /omd/sites/${site}/etc/check_mk/main.mk.local and is appended
   concat::fragment { 'check_mk-local-config':
     ensure => "${etc_dir}/check_mk/main.mk.local",
     target => "${etc_dir}/check_mk/main.mk",
@@ -83,18 +84,18 @@ class check_mk::config (
   }
   # re-read config if it changes
   exec { 'check_mk-refresh':
-    command     => "/bin/su -l -c '${bin_dir}/check_mk -I' ${site}",
+    command     => "${bin_dir}/check_mk -I",
     refreshonly => true,
     notify      => Exec['check_mk-reload'],
   }
   exec { 'check_mk-reload':
-    command     => "/bin/su -l -c '${bin_dir}/check_mk -O' ${site}",
+    command     => "${bin_dir}/check_mk -O",
     refreshonly => true,
   }
   # re-read inventory daily
   cron { 'check_mk-refresh-inventory-daily':
     user    => 'root',
-    command => "su -l -c '${bin_dir}/check_mk -O' ${site}",
+    command => "${bin_dir}/cmk -I",
     minute  => 0,
     hour    => 0,
   }

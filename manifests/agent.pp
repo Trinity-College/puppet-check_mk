@@ -1,5 +1,4 @@
 class check_mk::agent (
-  $filestore    = undef,
   $host_tags    = undef,
   $ip_whitelist = undef,
   $port         = '6556',
@@ -7,7 +6,6 @@ class check_mk::agent (
   $use_cache    = false,
   $user         = 'root',
   $version      = undef,
-  $workspace    = '/root/check_mk',
   $package      = undef,
   $mrpe_checks  = {},
 ) {

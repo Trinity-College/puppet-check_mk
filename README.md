@@ -1,24 +1,19 @@
 # check_mk
 
-[![Puppet Forge](http://img.shields.io/puppetforge/v/gnubilafrance/check_mk.svg)](https://forge.puppetlabs.com/gnubilafrance/check_mk)
-[![Build Status](https://travis-ci.org/gnubila-france/puppet-check_mk.png?branch=master)](https://travis-ci.org/gnubila-france/puppet-check_mk)
-
 Puppet module for:
-
-* Installing and configuring the Open Monitoring Distribution (OMD) which
-  includes Nagios, check_mk and lots of other tools
 
 * Installing and configuring check_mk agents
 
 Agent hostnames are automatically added to the server all_hosts configuration
 using stored configs.
 
-Original code by erwbgy, forked as upstream seems unmaintained.
+Upstream had morphed into an OMD module, but without re-naming it as such.
+This fork is to only be concerned with check-mk, assuming users have an
+existing nagios install they are trying to extend.
 
 ## Server
 
-* Installs omd package either using the system repository (eg. yum, apt) or
-  from a package file retrieved from the Puppet file store
+* Installs check-mk package(s) using the system repository (eg. yum, apt)
 
 * Populates the all_hosts array in /etc/check_mk/main.mk with hostnames
   exported by check::agent classes on agent hosts
@@ -27,51 +22,17 @@ Original code by erwbgy, forked as upstream seems unmaintained.
 
     include check_mk
 
-Installs the 'monitoring' package from the system repository. The default 'monitoring' site is used.
+Installs the 'monitoring' package from the system repository.
 
-### Example 2
-
-    class { 'check_mk':
-      filestore => 'puppet:///files/check_mk',
-      package   => 'omd-0.56-rh60-29.x86_64.rpm'
-    }
-
-Installs the specified omd package after retrieving it from the Puppet file store.
-
-### Example 3
-
-    class { 'check_mk':
-      site => 'acme',
-    }
-
-Installs the omd package from the system repository.  A site called 'acme' is
-created making the URL http://hostname/acme/check_mk/ running as the 'acme' user.
 
 ### check_mk parameters
 
-*package*: The omd package (rpm or deb) to install. Optional.
-
-*filestore*: The Puppet file store location where the package can be found (eg. 'puppet:///files/check_mk'). Optional.
+*package*: The check_mk_server package (rpm or deb) to install.
 
 *host_groups*: A hash with the host group names as the keys with a list of host tags to match as values. (See 'Host groups and tags' below). Optional.
 
-*site*: The name of the omd site (and the user/group it runs as). Default: 'monitoring'
-
-*workspace*: The directory to use to store files used during installation.  Default: '/root/check_mk'
-
 ### Notes
 
-* A user and group with the same value as the site parameter is created.  By default this is 'monitoring'.
-
-* The URL is http://yourhostname/sitename/check_mk/ - for example http://monhost.domain/monitoring/check_mk/
-
-* The default username/password is omdadmin/omd. To change this or add additional users log in as the site user and run htpasswd - for example:
-
-    monitoring$ htpasswd -b ~/etc/htpasswd guest guest
-
-* A user called 'guest' is configured as a guest user but is not enabled unless a password is set (as above).
-
-* RedHat-like RPM downloads from http://files.omdistro.org/releases/centos_rhel/
 
 ## Agent
 
@@ -100,8 +61,6 @@ are allowed to connect.
 
 ### check_mk::agent parameters
 
-*filestore*: The Puppet file store location where the packages can be found (eg. 'puppet:///files/check_mk'). Optional.
-
 *ip_whitelist*: The list of IP addresses that are allowed to retrieve check_mk
 data. (Note that localhost is always allowed to connect.) By default any IP can
 connect.
@@ -115,13 +74,6 @@ Default: '/usr/bin'
 monitoring server setups.  Default: 'false'
 
 *user*: The user that the agent runs as. Default: 'root'
-
-*version*: The version in the check_mk packages - for example if the RPM is
-'check_mk-agent-1.2.0p3-1.noarch.rpm' then the version is '1.2.0p3-1'.
-Only required if a filestore is used.
-
-*workspace*: The directory to use to store files used during installation.
-Default: '/root/check_mk'
 
 *mrpe_checks*: Specifies a hash of check_mk::agent::mrpe resources to create. Default: {}
 
@@ -164,8 +116,7 @@ host groups.
 ## Static host config
 
 Hosts that do not run Puppet with the check_mk module needs to get added to hiera.
-check_mk::config creates the config file 
-/omd/sites/monitoring/etc/check_mk/all_hosts_static from a template.
+check_mk::config creates the config file /etc/check_mk/all_hosts_static from a template.
 The template will look for hiera variables.
 The hiera variable check_mk::all_hosts_static has to be an array:
 
