@@ -5,6 +5,8 @@ class check_mk::config (
   $etc_dir = "/etc"
   $bin_dir = "/usr/bin"
   $nagios_dir = "${etc_dir}/nagios3/conf.d/check_mk"
+  $all_hosts_static = hiera(check_mk::all_hosts_static)
+
   file { $nagios_dir:
     ensure => directory,
   }
