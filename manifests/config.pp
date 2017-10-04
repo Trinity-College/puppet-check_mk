@@ -52,7 +52,7 @@ class check_mk::config (
     notify => Exec['check_mk-refresh']
   }
   concat::fragment { 'all-hosts-static':
-    ensure => "${etc_dir}/check_mk/all_hosts_static",
+    source => "${etc_dir}/check_mk/all_hosts_static",
     target => "${etc_dir}/check_mk/main.mk",
     order  => 18,
   }
@@ -80,7 +80,7 @@ class check_mk::config (
     }
   }
   concat::fragment { 'check_mk-local-config':
-    ensure => "${etc_dir}/check_mk/main.mk.local",
+    source => "${etc_dir}/check_mk/main.mk.local",
     target => "${etc_dir}/check_mk/main.mk",
     order  => 99,
   }
